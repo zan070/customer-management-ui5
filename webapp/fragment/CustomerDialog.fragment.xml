@@ -1,0 +1,119 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form">
+
+    <Dialog
+        id="dlgCustomer"
+        title="Customer Detail"
+        afterClose="onDialogAfterClose">
+
+        <content>
+  
+            <form:SimpleForm
+                id="frmCustomer"
+                editable="false">
+
+                <Label
+                    id="lblCustomerID"
+                    text="Customer ID" 
+                    visible="{= !${view>/isCreate} }"/>
+
+                <Text
+                    id="txtDlgCustomerID"
+                    text="{local>CustomerID}" 
+                    visible="{= !${view>/isCreate} }"/>
+ 
+                <Label
+                    id="lblName"
+                    text="Name" />
+
+                <Text
+                    id="txtDlgName"
+                    text="{local>Name}" 
+                    visible="{= !${view>/editMode}}" />
+
+                <Input 
+                    id="inpDlgName" 
+                    value="{edit>/Name}" 
+                    visible="{view>/editMode}" 
+                    liveChange="onNameLiveChange"
+                    valueState="{view>/nameState}"
+                    valueStateText="Name is required" /> 
+
+                <Label
+                    id="lblCity"
+                    text="City" />
+
+                <Text
+                    id="txtDlgCity"
+                    text="{local>City}" 
+                    visible="{= !${view>/editMode}}" />
+
+                <Input 
+                    id="inpDlgCity" 
+                    value="{edit>/City}" 
+                    visible="{view>/editMode}" 
+                    liveChange="onCityLiveChange"
+                    valueState="{view>/cityState}"
+                    valueStateText="City is required" /> 
+
+                <Label
+                    id="lblPhone"
+                    text="Phone" />
+
+                <Text
+                    id="txtDlgPhone"
+                    text="{local>Phone}" 
+                    visible="{= !${view>/editMode}}" />
+
+                <Input 
+                    id="inpDlgPhone" 
+                    value="{edit>/Phone}" 
+                    visible="{view>/editMode}"
+                    liveChange="onPhoneLiveChange"
+                    valueState="{view>/phoneState}"
+                    valueStateText="Phone is required" /> 
+
+            </form:SimpleForm>
+
+        </content>
+
+        <buttons>
+
+            <Button
+                id="btnDelete"
+                text="Delete"
+                type="Negative"
+                press="onDelete"
+                visible="{= !${view>/isCreate} }"/>
+
+            <Button
+                id="btnEdit"
+                text="Edit"
+                press="onEdit" 
+                visible="{= !${view>/editMode}}"/>
+            
+            <Button
+                id="btnSave"
+                text="Save"
+                press="onSave"
+                visible="{view>/editMode}" />
+
+            <Button
+                id="btnCancel"
+                text="Cancel"
+                press="onCancel"
+                visible="{view>/editMode}" />
+    
+            <Button
+                id="btnClose"
+                text="Close"
+                press="onCloseDialog" 
+                visible="{= !${view>/editMode}}"/>
+
+        </buttons>
+
+    </Dialog>
+
+</core:FragmentDefinition>

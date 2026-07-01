@@ -1,0 +1,91 @@
+<mvc:View
+    controllerName="com.demo.customer.customerui5.controller.App"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+
+    <App id="app">
+        <pages>
+            <Page
+                id="page"
+                title="Customer Management">
+
+                <content>
+
+                    <VBox id="vbxMain">
+
+                    <SearchField
+                     id="sfCustomer"
+                     width="100%"
+                    placeholder="Search Customer"
+                    search="onSearch" />
+
+                    <Button
+                    id="btnReset"
+                    text="Reset"
+                    press="onReset" />
+
+                    <Table id="tblCustomer" items="{local>/customers}">
+
+                        <headerToolbar>
+
+                            <Toolbar id="tbCustomer">
+
+                                <Title
+                                    id="ttlCustomer"
+                                    text="Customer List"/>
+
+                                <ToolbarSpacer id="tbsCustomer"/>
+
+                                <Button
+                                    id="btnAdd"
+                                    text="Add"
+                                    icon="sap-icon://add"
+                                    press="onAdd"/>
+
+                            </Toolbar>
+
+                        </headerToolbar>
+
+                        <columns>
+                            <Column id="colCustomerID">
+                                <Text id="txtHeaderCustomerID" text="Customer ID"/>
+                            </Column>
+
+                            <Column id="colName">
+                                <Text id="txtHeaderName" text="Name"/>
+                            </Column>
+
+                            <Column id="colCity">
+                                <Text id="txtHeaderCity" text="City"/>
+                            </Column>
+
+                            <Column id="colPhone">
+                                <Text id="txtHeaderPhone" text="Phone"/>
+                            </Column>
+                        </columns>
+
+                        <items>
+                            <ColumnListItem 
+                                id="cliCustomer"
+                                type="Navigation"
+                                press="onItemPress">
+                                <cells>
+                                    <Text id="txtCustomerID" text="{local>CustomerID}" />
+                                    <Text id="txtName" text="{local>Name}" />
+                                    <Text id="txtCity" text="{local>City}" />
+                                    <Text id="txtPhone" text="{local>Phone}" />
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+
+                    </Table>
+
+                    </VBox>
+
+                </content>
+
+            </Page>
+        </pages>
+    </App>
+
+</mvc:View>
