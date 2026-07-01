@@ -98,6 +98,7 @@ sap.ui.define([
         },
 
         onCancel: function () {
+            var oViewModel = this.getView().getModel("view");
             var oContext = this._oCustomerDialog.getBindingContext("local"); 
             //編集モードでのみコンテキストを取得
             if (!oViewModel.getProperty("/isCreate")) {
@@ -279,15 +280,12 @@ sap.ui.define([
 
             var oLocalModel = this.getView().getModel("local");
             var aCustomers = oLocalModel.getProperty("/customers");
-
             var iIndex = parseInt(sPath.split("/")[2], 10);
 
             aCustomers.splice(iIndex, 1);
-
             oLocalModel.refresh(true);
 
             this._oCustomerDialog.close();
-
             MessageToast.show("Deleted successfully.");
         },
 
