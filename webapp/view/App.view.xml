@@ -1,84 +1,186 @@
 <mvc:View
     controllerName="com.demo.customer.customerui5.controller.App"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m">
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
 
     <App id="app">
         <pages>
             <Page
                 id="page"
-                title="Customer Management">
+                title="{i18n>pageTitle}"
+                busy="{view>/busy}"
+                busyIndicatorDelay="0">
 
                 <content>
 
                     <VBox id="vbxMain">
 
-                    <SearchField
-                     id="sfCustomer"
-                     width="100%"
-                    placeholder="Search Customer"
-                    search="onSearch" />
+                        <SearchField
+                            id="sfCustomer"
+                            width="40%"
+                            placeholder="{i18n>searchPlaceholder}"
+                            search="onSearch" />
 
-                    <Button
-                    id="btnReset"
-                    text="Reset"
-                    press="onReset" />
+                        <Button
+                            id="btnReset"
+                            text="{i18n>resetButton}"
+                            press="onReset" />
 
-                    <Table id="tblCustomer" items="{local>/customers}">
+                        <Table
+                            id="tblCustomer"
+                            items="{local>/customers}"
+                            noDataText="{i18n>noDataText}"
+                            mode="MultiSelect"
+                            selectionChange="onSelectionChange">
 
-                        <headerToolbar>
+                            <headerToolbar>
 
-                            <Toolbar id="tbCustomer">
+                                <OverflowToolbar id="tbCustomer">
 
-                                <Title
-                                    id="ttlCustomer"
-                                    text="Customer List"/>
+                                    <Title
+                                        id="ttlCustomer"
+                                        text="{i18n>customerListTitle} ({= ${local>/customers}.length})" />
 
-                                <ToolbarSpacer id="tbsCustomer"/>
+                                    <ToolbarSpacer id="tbsCustomer" />
 
-                                <Button
-                                    id="btnAdd"
-                                    text="Add"
-                                    icon="sap-icon://add"
-                                    press="onAdd"/>
+                                    <Button
+                                        id="btnDeleteSelected"
+                                        text="{i18n>deleteButton}"
+                                        icon="sap-icon://delete"
+                                        type="Reject"
+                                        enabled="{view>/hasSelection}"
+                                        press="onDeleteSelected" />
 
-                            </Toolbar>
+                                    <Button
+                                        id="btnAdd"
+                                        text="{i18n>addButton}"
+                                        icon="sap-icon://add"
+                                        press="onAdd" />
 
-                        </headerToolbar>
+                                    <MenuButton
+                                        id="btnSort"
+                                        text="{view>/sortButtonText}"
+                                        icon="{view>/sortButtonIcon}">
 
-                        <columns>
-                            <Column id="colCustomerID">
-                                <Text id="txtHeaderCustomerID" text="Customer ID"/>
-                            </Column>
+                                        <menu>
+                                            <Menu>
+                                                <items>
 
-                            <Column id="colName">
-                                <Text id="txtHeaderName" text="Name"/>
-                            </Column>
+                                                    <MenuItem
+                                                        text="{i18n>sortClear}"
+                                                        icon="sap-icon://sort-clear"
+                                                        press="onSortClear"
+                                                        enabled="{= !!${view>/sortPath} }" />
 
-                            <Column id="colCity">
-                                <Text id="txtHeaderCity" text="City"/>
-                            </Column>
+                                                    <MenuItem
+                                                        text="{i18n>sortByCustomerID}"
+                                                        press="onSortSelect">
+                                                        <customData>
+                                                            <core:CustomData
+                                                                key="sortPath"
+                                                                value="CustomerID" />
+                                                            <core:CustomData
+                                                                key="sortLabel"
+                                                                value="{i18n>sortByCustomerID}" />
+                                                        </customData>
+                                                    </MenuItem>
 
-                            <Column id="colPhone">
-                                <Text id="txtHeaderPhone" text="Phone"/>
-                            </Column>
-                        </columns>
+                                                    <MenuItem
+                                                        text="{i18n>sortByName}"
+                                                        press="onSortSelect">
+                                                        <customData>
+                                                            <core:CustomData
+                                                                key="sortPath"
+                                                                value="Name" />
+                                                            <core:CustomData
+                                                                key="sortLabel"
+                                                                value="{i18n>sortByName}" />
+                                                        </customData>
+                                                    </MenuItem>
 
-                        <items>
-                            <ColumnListItem 
-                                id="cliCustomer"
-                                type="Navigation"
-                                press="onItemPress">
-                                <cells>
-                                    <Text id="txtCustomerID" text="{local>CustomerID}" />
-                                    <Text id="txtName" text="{local>Name}" />
-                                    <Text id="txtCity" text="{local>City}" />
-                                    <Text id="txtPhone" text="{local>Phone}" />
-                                </cells>
-                            </ColumnListItem>
-                        </items>
+                                                    <MenuItem
+                                                        text="{i18n>sortByCity}"
+                                                        press="onSortSelect">
+                                                        <customData>
+                                                            <core:CustomData
+                                                                key="sortPath"
+                                                                value="City" />
+                                                            <core:CustomData
+                                                                key="sortLabel"
+                                                                value="{i18n>sortByCity}" />
+                                                        </customData>
+                                                    </MenuItem>
 
-                    </Table>
+                                                    <MenuItem
+                                                        text="{i18n>sortByPhone}"
+                                                        press="onSortSelect">
+                                                        <customData>
+                                                            <core:CustomData
+                                                                key="sortPath"
+                                                                value="Phone" />
+                                                            <core:CustomData
+                                                                key="sortLabel"
+                                                                value="{i18n>sortByPhone}" />
+                                                        </customData>
+                                                    </MenuItem>
+
+                                                </items>
+                                            </Menu>
+                                        </menu>
+                                    </MenuButton>
+
+                                </OverflowToolbar>
+
+                            </headerToolbar>
+
+                            <columns>
+                                <Column
+                                    id="colCustomerID"
+                                    importance="High">
+                                    <Text id="txtHeaderCustomerID" text="{i18n>colCustomerID}" />
+                                </Column>
+
+                                <Column
+                                    id="colName"
+                                    importance="High">
+                                    <Text id="txtHeaderName" text="{i18n>colName}" />
+                                </Column>
+
+                                <Column
+                                    id="colCity"
+                                    importance="Medium"
+                                    demandPopin="true"
+                                    minScreenWidth="600px"
+                                    popinDisplay="Inline">
+                                    <Text id="txtHeaderCity" text="{i18n>colCity}" />
+                                </Column>
+
+                                <Column
+                                    id="colPhone"
+                                    importance="Low"
+                                    demandPopin="true"
+                                    minScreenWidth="800px"
+                                    popinDisplay="Inline">
+                                    <Text id="txtHeaderPhone" text="{i18n>colPhone}" />
+                                </Column>
+                            </columns>
+
+                            <items>
+                                <ColumnListItem
+                                    id="cliCustomer"
+                                    type="Navigation"
+                                    press="onItemPress">
+                                    <cells>
+                                        <Text id="txtCustomerID" text="{local>CustomerID}" />
+                                        <Text id="txtName" text="{local>Name}" />
+                                        <Text id="txtCity" text="{local>City}" />
+                                        <Text id="txtPhone" text="{local>Phone}" />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+
+                        </Table>
 
                     </VBox>
 

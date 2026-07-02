@@ -19,8 +19,8 @@ sap.ui.define([
             // set the device model
             this.setModel(models.createDeviceModel(), "device");
 
-             var oData = {
-                 customers: [
+            var oData = {
+                customers: [
                     {
                         CustomerID: "100001",
                         Name: "Tom",
@@ -37,13 +37,13 @@ sap.ui.define([
                         CustomerID: "100003",
                         Name: "Mary",
                         City: "Nagoya",
-                        Phone: "090-3333-3333"  
+                        Phone: "090-3333-3333"
                     }
                 ]
             };
 
-    var oModel = new sap.ui.model.json.JSONModel(oData);
-    this.setModel(oModel, "local");
+            var oModel = new sap.ui.model.json.JSONModel(oData);
+            this.setModel(oModel, "local");
 
             // enable routing
             this.getRouter().initialize();

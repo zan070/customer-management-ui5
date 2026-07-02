@@ -5,75 +5,74 @@
 
     <Dialog
         id="dlgCustomer"
-        title="Customer Detail"
         afterClose="onDialogAfterClose">
 
         <content>
-  
+
             <form:SimpleForm
                 id="frmCustomer"
                 editable="false">
 
                 <Label
                     id="lblCustomerID"
-                    text="Customer ID" 
-                    visible="{= !${view>/isCreate} }"/>
+                    text="{i18n>fieldCustomerID}"
+                    visible="{= !${view>/isCreate} }" />
 
                 <Text
                     id="txtDlgCustomerID"
-                    text="{local>CustomerID}" 
-                    visible="{= !${view>/isCreate} }"/>
- 
+                    text="{local>CustomerID}"
+                    visible="{= !${view>/isCreate} }" />
+
                 <Label
                     id="lblName"
-                    text="Name" />
+                    text="{i18n>fieldName}" />
 
                 <Text
                     id="txtDlgName"
-                    text="{local>Name}" 
+                    text="{local>Name}"
                     visible="{= !${view>/editMode}}" />
 
-                <Input 
-                    id="inpDlgName" 
-                    value="{edit>/Name}" 
-                    visible="{view>/editMode}" 
+                <Input
+                    id="inpDlgName"
+                    value="{edit>/Name}"
+                    visible="{view>/editMode}"
                     liveChange="onNameLiveChange"
                     valueState="{view>/nameState}"
-                    valueStateText="Name is required" /> 
+                    valueStateText="{i18n>msgFieldRequired}" />
 
                 <Label
                     id="lblCity"
-                    text="City" />
+                    text="{i18n>fieldCity}" />
 
                 <Text
                     id="txtDlgCity"
-                    text="{local>City}" 
+                    text="{local>City}"
                     visible="{= !${view>/editMode}}" />
 
-                <Input 
-                    id="inpDlgCity" 
-                    value="{edit>/City}" 
-                    visible="{view>/editMode}" 
+                <Input
+                    id="inpDlgCity"
+                    value="{edit>/City}"
+                    visible="{view>/editMode}"
                     liveChange="onCityLiveChange"
                     valueState="{view>/cityState}"
-                    valueStateText="City is required" /> 
+                    valueStateText="{i18n>msgFieldRequired}" />
 
                 <Label
                     id="lblPhone"
-                    text="Phone" />
+                    text="{i18n>fieldPhone}" />
 
                 <Text
                     id="txtDlgPhone"
-                    text="{local>Phone}" 
+                    text="{local>Phone}"
                     visible="{= !${view>/editMode}}" />
 
-                <Input 
-                    id="inpDlgPhone" 
-                    value="{edit>/Phone}" 
+                <Input
+                    id="inpDlgPhone"
+                    value="{edit>/Phone}"
                     visible="{view>/editMode}"
                     liveChange="onPhoneLiveChange"
                     valueState="{view>/phoneState}"
-                    valueStateText="Phone is required" /> 
+                    valueStateText="{view>/phoneStateText}" />
 
             </form:SimpleForm>
 
@@ -83,34 +82,34 @@
 
             <Button
                 id="btnDelete"
-                text="Delete"
+                text="{i18n>deleteButton}"
                 type="Negative"
                 press="onDelete"
-                visible="{= !${view>/isCreate} }"/>
+                visible="{= !${view>/isCreate} }" />
 
             <Button
                 id="btnEdit"
-                text="Edit"
-                press="onEdit" 
-                visible="{= !${view>/editMode}}"/>
-            
+                text="{i18n>editButton}"
+                press="onEdit"
+                visible="{= !${view>/editMode}}" />
+
             <Button
                 id="btnSave"
-                text="Save"
+                text="{i18n>saveButton}"
                 press="onSave"
                 visible="{view>/editMode}" />
 
             <Button
                 id="btnCancel"
-                text="Cancel"
+                text="{i18n>cancelButton}"
                 press="onCancel"
                 visible="{view>/editMode}" />
-    
+
             <Button
                 id="btnClose"
-                text="Close"
-                press="onCloseDialog" 
-                visible="{= !${view>/editMode}}"/>
+                text="{i18n>closeButton}"
+                press="onCloseDialog"
+                visible="{= !${view>/editMode}}" />
 
         </buttons>
 
