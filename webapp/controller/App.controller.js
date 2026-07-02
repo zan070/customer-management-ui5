@@ -456,13 +456,13 @@ sap.ui.define([
 
             var oViewModel = this.getView().getModel("view");
 
-            // Create模式：直接关闭
+            // Createモード：クローズ
             if (oViewModel.getProperty("/isCreate")) {
                 this.onCloseDialog();
                 return;
             }
 
-            // Edit模式：恢复编辑数据
+            // Editモード：元のデータに戻す
             var oContext = this._oCustomerDialog.getBindingContext("local");
             this._createEditModel(oContext);
 
@@ -475,12 +475,12 @@ sap.ui.define([
             var oEditModel = this.getView().getModel("edit");
             var oEditData = oEditModel.getData();
 
-            // Create模式：只要有任意字段被填写过，就算有未保存变更
+            // Createモード：いずれかのフィールドに入力が行われている場合、未保存の変更があるものとみなされます。
             if (oViewModel.getProperty("/isCreate")) {
                 return !!(oEditData.Name || oEditData.City || oEditData.Phone);
             }
 
-            // Edit模式：与原始数据逐字段比较
+            // Editモード：ソースデータと項目ごとに比較する
             var oContext = this._oCustomerDialog.getBindingContext("local");
             var oOriginalData = oContext.getObject();
 
