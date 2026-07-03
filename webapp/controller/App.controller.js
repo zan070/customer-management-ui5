@@ -14,26 +14,27 @@ sap.ui.define([
     return Controller.extend("com.demo.customer.customerui5.controller.App", {
 
         onInit() {
-
+        
             this._oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
-
+        
             var oViewModel = new JSONModel({
                 editMode: false,
                 isCreate: false,
-
+            
                 nameState: "None",
                 cityState: "None",
                 phoneState: "None",
                 phoneStateText: "",
-
+            
                 sortDescending: false,
-                sortPath: "CustomerID",
-
+                sortPath: "",
+            
                 hasSelection: false,
-                busy: false,
-
+            
                 sortButtonText: this._oResourceBundle.getText("sortButton"),
-                sortButtonIcon: "sap-icon://sort"
+                sortButtonIcon: "sap-icon://sort",
+            
+                busy: false
             });
             this.getView().setModel(oViewModel, "view");
         },
@@ -47,41 +48,36 @@ sap.ui.define([
             if (sValue) {
                 var oFilter = new Filter({
                     filters: [
-                        new Filter("CustomerID", FilterOperator.Contains, sValue),
                         new Filter("Name", FilterOperator.Contains, sValue),
                         new Filter("City", FilterOperator.Contains, sValue),
                         new Filter("Phone", FilterOperator.Contains, sValue)
                     ],
                     and: false
                 });
-
+            
                 aFilters.push(oFilter);
             }
             oBinding.filter(aFilters);
         },
 
         onReset: function () {
-
             var oTable = this.byId("tblCustomer");
             var oBinding = oTable.getBinding("items");
-
-            // クリアフィルター
+        
             oBinding.filter([]);
-
-            // クリア検索フィールド
             this.byId("sfCustomer").setValue("");
         },
 
         async onItemPress(oEvent) {
 
             var oItem = oEvent.getSource();
-            var oContext = oItem.getBindingContext("local");
-            var sId = oContext.getProperty("CustomerID");
+            var oContext = oItem.getBindingContext();
+            var sId = oContext.getProperty("ID");
 
             this._createEditModel(oContext);
 
             await this._ensureCustomerDialog();
-            this._oCustomerDialog.setBindingContext(oContext, "local");
+            this._oCustomerDialog.setBindingContext(oContext);
             this._oCustomerDialog.setTitle(this._oResourceBundle.getText("dialogTitleDetail", [sId]));
             this._oCustomerDialog.open();
         },
@@ -95,27 +91,29 @@ sap.ui.define([
             oViewModel.setProperty("/editMode", true);
         },
 
-        onSave: function () {
-            // 入力チェック,（空白の場合、枠は赤くなる）
+        async onSave() {        
             if (!this._validateAll()) {
                 return;
             }
-
-            this._setBusy(true);
-
+        
+            this._setBusy(true);        
             var oViewModel = this.getView().getModel("view");
-
-            if (oViewModel.getProperty("/isCreate")) {
-                this._createCustomer();
-            } else {
-                this._updateCustomer();
+        
+            try {
+                if (oViewModel.getProperty("/isCreate")) {
+                    await this._createCustomer();
+                } else {
+                    await this._updateCustomer();
+                }
+            
+                this._oCustomerDialog.close();
+                MessageToast.show(this._oResourceBundle.getText("msgSaveSuccess"));
+            
+            } catch (oError) {
+                MessageBox.error(oError.message || this._oResourceBundle.getText("msgSaveError"));
+            } finally {
+                this._setBusy(false);
             }
-
-            // 編集モードを終了し、ビューモードに戻す
-            this._oCustomerDialog.close();
-            MessageToast.show(this._oResourceBundle.getText("msgSaveSuccess"));
-
-            this._setBusy(false);
         },
 
         onCancel: function () {
@@ -150,7 +148,6 @@ sap.ui.define([
 
         async onAdd() {
             var oNewCustomer = {
-                CustomerID: "",
                 Name: "",
                 City: "",
                 Phone: ""
@@ -164,6 +161,7 @@ sap.ui.define([
             oViewModel.setProperty("/isCreate", true);
 
             await this._ensureCustomerDialog();
+            this._oCustomerDialog.setBindingContext(null);
             this._oCustomerDialog.setTitle(this._oResourceBundle.getText("dialogTitleCreate"));
             this._oCustomerDialog.open();
         },
@@ -173,63 +171,61 @@ sap.ui.define([
             var oMenuItem = oEvent.getSource();
             var sSortPath = oMenuItem.data("sortPath");
             var sSortLabel = oMenuItem.data("sortLabel");
-
+                
             if (!sSortPath) {
                 return;
             }
-
+        
             var oViewModel = this.getView().getModel("view");
             var sCurrentPath = oViewModel.getProperty("/sortPath");
             var bDescending = oViewModel.getProperty("/sortDescending");
-
-            // 同じ列を再度クリック -> 昇順/降順を切り替え
-            // 別の列をクリック -> 昇順にリセット
+        
             if (sCurrentPath === sSortPath) {
                 bDescending = !bDescending;
             } else {
                 bDescending = false;
             }
-
+        
             var oTable = this.byId("tblCustomer");
             var oBinding = oTable.getBinding("items");
             var oSorter = new Sorter(sSortPath, bDescending);
-
+        
             oBinding.sort(oSorter);
-
+        
             oViewModel.setProperty("/sortPath", sSortPath);
             oViewModel.setProperty("/sortDescending", bDescending);
-
+        
             var sPrefix = this._oResourceBundle.getText("sortButton");
             oViewModel.setProperty("/sortButtonText", sPrefix + ": " + sSortLabel);
             oViewModel.setProperty(
                 "/sortButtonIcon",
                 bDescending ? "sap-icon://sort-descending" : "sap-icon://sort-ascending"
             );
-
+        
             var sDirectionKey = bDescending ? "sortDescending" : "sortAscending";
-
+        
             MessageToast.show(
                 this._oResourceBundle.getText("msgSortApplied", [
-                    oMenuItem.getText(),
+                    sSortLabel,
                     this._oResourceBundle.getText(sDirectionKey)
                 ])
             );
         },
-
+        
         onSortClear: function () {
-
+        
             var oViewModel = this.getView().getModel("view");
-
+        
             var oTable = this.byId("tblCustomer");
             var oBinding = oTable.getBinding("items");
-
-            oBinding.sort(null);   // 传 null 清除排序，恢复数据原始顺序
-
+        
+            oBinding.sort(null);
+        
             oViewModel.setProperty("/sortPath", "");
             oViewModel.setProperty("/sortDescending", false);
             oViewModel.setProperty("/sortButtonText", this._oResourceBundle.getText("sortButton"));
             oViewModel.setProperty("/sortButtonIcon", "sap-icon://sort");
-
+        
             MessageToast.show(this._oResourceBundle.getText("msgSortCleared"));
         },
 
@@ -257,22 +253,26 @@ sap.ui.define([
         },
 
         onDeleteSelected: function () {
-
+        
             var oTable = this.byId("tblCustomer");
             var aSelectedItems = oTable.getSelectedItems();
-
+        
             if (aSelectedItems.length === 0) {
                 return;
             }
-
-            var aSelectedIds = aSelectedItems.map(function (oItem) {
-                return oItem.getBindingContext("local").getProperty("CustomerID");
+        
+            var aSelectedContexts = aSelectedItems.map(function (oItem) {
+                return oItem.getBindingContext();
             });
-
+        
+            var aSelectedIds = aSelectedContexts.map(function (oContext) {
+                return oContext.getProperty("ID");
+            });
+        
             var sConfirmText = aSelectedItems.length === 1
                 ? this._oResourceBundle.getText("msgDeleteConfirm")
                 : this._oResourceBundle.getText("msgDeleteConfirmMulti", [aSelectedItems.length]);
-
+        
             MessageBox.confirm(
                 sConfirmText,
                 {
@@ -281,10 +281,18 @@ sap.ui.define([
                     onClose: function (sAction) {
                         if (sAction === MessageBox.Action.OK) {
                             this._setBusy(true);
-                            this._deleteCustomersByIds(aSelectedIds);
-                            oTable.removeSelections(true);
-                            this.getView().getModel("view").setProperty("/hasSelection", false);
-                            this._setBusy(false);
+                        
+                            this._deleteCustomersByIds(aSelectedIds, aSelectedContexts)
+                                .then(function () {
+                                    oTable.removeSelections(true);
+                                    this.getView().getModel("view").setProperty("/hasSelection", false);
+                                }.bind(this))
+                                .catch(function (oError) {
+                                    MessageBox.error(oError.message);
+                                })
+                                .finally(function () {
+                                    this._setBusy(false);
+                                }.bind(this));
                         }
                     }.bind(this)
                 }
@@ -303,21 +311,18 @@ sap.ui.define([
             return true;
         },
 
-        _deleteCustomersByIds: function (aIds) {
-
-            var oLocalModel = this.getView().getModel("local");
-            var aCustomers = oLocalModel.getProperty("/customers");
-
-            var aRemaining = aCustomers.filter(function (oCustomer) {
-                return aIds.indexOf(oCustomer.CustomerID) === -1;
+        _deleteCustomersByIds: async function (aIds, aContexts) {
+        
+            var aDeletePromises = aContexts.map(function (oContext) {
+                return oContext.delete();
             });
-
-            oLocalModel.setProperty("/customers", aRemaining);
-
+        
+            await Promise.all(aDeletePromises);
+        
             var sMsg = aIds.length === 1
                 ? this._oResourceBundle.getText("msgDeleteSuccess")
                 : this._oResourceBundle.getText("msgDeleteSuccessMulti", [aIds.length]);
-
+        
             MessageToast.show(sMsg);
         },
 
@@ -406,50 +411,50 @@ sap.ui.define([
             }
         },
 
-        _generateCustomerId: function () {
-            var oLocalModel = this.getView().getModel("local");
-            var aCustomers = oLocalModel.getProperty("/customers");
-
-            if (aCustomers.length === 0) {
-                return "100001";
-            }
-
-            var iMaxId = aCustomers.reduce(function (iMax, oCustomer) {
-                var iId = parseInt(oCustomer.CustomerID, 10);
-                return iId > iMax ? iId : iMax;
-            }, 0);
-
-            return String(iMaxId + 1);
-        },
-
         _createCustomer: function () {
-            var oLocalModel = this.getView().getModel("local");
+        
+            var oTable = this.byId("tblCustomer");
+            var oBinding = oTable.getBinding("items");
             var oEditModel = this.getView().getModel("edit");
-
-            var aCustomers = oLocalModel.getProperty("/customers");
-            var oNewCustomer = oEditModel.getData();
-            oNewCustomer.CustomerID = this._generateCustomerId();
-            aCustomers.push(oNewCustomer);
-            oLocalModel.refresh(true);
+            var oNewData = oEditModel.getData();
+        
+            var oContext = oBinding.create(oNewData);
+        
+            return oContext.created();
         },
 
         _updateCustomer: function () {
-            var oContext = this._oCustomerDialog.getBindingContext("local");
-            var sPath = oContext.getPath();
-
-            var oLocalModel = this.getView().getModel("local");
+        
+            var oContext = this._oCustomerDialog.getBindingContext();
             var oEditModel = this.getView().getModel("edit");
-            oLocalModel.setProperty(sPath, oEditModel.getData());
+            var oEditData = oEditModel.getData();
+        
+            var oModel = this.getView().getModel();
+        
+            oContext.setProperty("Name", oEditData.Name);
+            oContext.setProperty("City", oEditData.City);
+            oContext.setProperty("Phone", oEditData.Phone);
+        
+            return oModel.submitBatch("$auto");
         },
 
         _deleteCustomer: function () {
-            var oContext = this._oCustomerDialog.getBindingContext("local");
-            var sId = oContext.getProperty("CustomerID");
-
+        
+            var oContext = this._oCustomerDialog.getBindingContext();
+            var sId = oContext.getProperty("ID");
+        
             this._setBusy(true);
-            this._deleteCustomersByIds([sId]);
-            this._oCustomerDialog.close();
-            this._setBusy(false);
+        
+            this._deleteCustomersByIds([sId], [oContext])
+                .then(function () {
+                    this._oCustomerDialog.close();
+                }.bind(this))
+                .catch(function (oError) {
+                    MessageBox.error(oError.message);
+                })
+                .finally(function () {
+                    this._setBusy(false);
+                }.bind(this));
         },
 
         _doCancel: function () {
@@ -463,7 +468,7 @@ sap.ui.define([
             }
 
             // Editモード：元のデータに戻す
-            var oContext = this._oCustomerDialog.getBindingContext("local");
+            var oContext = this._oCustomerDialog.getBindingContext();
             this._createEditModel(oContext);
 
             this._resetDialogState();
@@ -481,7 +486,7 @@ sap.ui.define([
             }
 
             // Editモード：ソースデータと項目ごとに比較する
-            var oContext = this._oCustomerDialog.getBindingContext("local");
+            var oContext = this._oCustomerDialog.getBindingContext();
             var oOriginalData = oContext.getObject();
 
             return oEditData.Name !== oOriginalData.Name ||

@@ -29,7 +29,7 @@
 
                         <Table
                             id="tblCustomer"
-                            items="{local>/customers}"
+                            items="{/Customers}"
                             noDataText="{i18n>noDataText}"
                             mode="MultiSelect"
                             selectionChange="onSelectionChange">
@@ -40,7 +40,7 @@
 
                                     <Title
                                         id="ttlCustomer"
-                                        text="{i18n>customerListTitle} ({= ${local>/customers}.length})" />
+                                        text="{i18n>customerListTitle}" />
 
                                     <ToolbarSpacer id="tbsCustomer" />
 
@@ -62,31 +62,34 @@
                                         id="btnSort"
                                         text="{view>/sortButtonText}"
                                         icon="{view>/sortButtonIcon}">
-
+                                    
                                         <menu>
-                                            <Menu>
+                                            <Menu id="menuSort">
                                                 <items>
-
+                                    
                                                     <MenuItem
+                                                        id="miSortClear"
                                                         text="{i18n>sortClear}"
                                                         icon="sap-icon://sort-clear"
                                                         press="onSortClear"
                                                         enabled="{= !!${view>/sortPath} }" />
-
+                                    
                                                     <MenuItem
+                                                        id="miSortByCustomerID"
                                                         text="{i18n>sortByCustomerID}"
                                                         press="onSortSelect">
                                                         <customData>
                                                             <core:CustomData
                                                                 key="sortPath"
-                                                                value="CustomerID" />
+                                                                value="ID" />
                                                             <core:CustomData
                                                                 key="sortLabel"
                                                                 value="{i18n>sortByCustomerID}" />
                                                         </customData>
                                                     </MenuItem>
-
+                                    
                                                     <MenuItem
+                                                        id="miSortByName"
                                                         text="{i18n>sortByName}"
                                                         press="onSortSelect">
                                                         <customData>
@@ -98,8 +101,9 @@
                                                                 value="{i18n>sortByName}" />
                                                         </customData>
                                                     </MenuItem>
-
+                                    
                                                     <MenuItem
+                                                        id="miSortByCity"
                                                         text="{i18n>sortByCity}"
                                                         press="onSortSelect">
                                                         <customData>
@@ -111,8 +115,9 @@
                                                                 value="{i18n>sortByCity}" />
                                                         </customData>
                                                     </MenuItem>
-
+                                    
                                                     <MenuItem
+                                                        id="miSortByPhone"
                                                         text="{i18n>sortByPhone}"
                                                         press="onSortSelect">
                                                         <customData>
@@ -124,7 +129,7 @@
                                                                 value="{i18n>sortByPhone}" />
                                                         </customData>
                                                     </MenuItem>
-
+                                    
                                                 </items>
                                             </Menu>
                                         </menu>
@@ -135,15 +140,11 @@
                             </headerToolbar>
 
                             <columns>
-                                <Column
-                                    id="colCustomerID"
-                                    importance="High">
+                                <Column id="colCustomerID" importance="High">
                                     <Text id="txtHeaderCustomerID" text="{i18n>colCustomerID}" />
                                 </Column>
 
-                                <Column
-                                    id="colName"
-                                    importance="High">
+                                <Column id="colName" importance="High">
                                     <Text id="txtHeaderName" text="{i18n>colName}" />
                                 </Column>
 
@@ -172,10 +173,10 @@
                                     type="Navigation"
                                     press="onItemPress">
                                     <cells>
-                                        <Text id="txtCustomerID" text="{local>CustomerID}" />
-                                        <Text id="txtName" text="{local>Name}" />
-                                        <Text id="txtCity" text="{local>City}" />
-                                        <Text id="txtPhone" text="{local>Phone}" />
+                                        <Text id="txtCustomerID" text="{ID}" />
+                                        <Text id="txtName" text="{Name}" />
+                                        <Text id="txtCity" text="{City}" />
+                                        <Text id="txtPhone" text="{Phone}" />
                                     </cells>
                                 </ColumnListItem>
                             </items>

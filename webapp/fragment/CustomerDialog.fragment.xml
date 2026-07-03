@@ -16,12 +16,12 @@
                 <Label
                     id="lblCustomerID"
                     text="{i18n>fieldCustomerID}"
-                    visible="{= !${view>/isCreate} }" />
+                    visible="{= !${view>/isCreate} }"/>
 
                 <Text
                     id="txtDlgCustomerID"
-                    text="{local>CustomerID}"
-                    visible="{= !${view>/isCreate} }" />
+                    text="{ID}"
+                    visible="{= !${view>/isCreate} }"/>
 
                 <Label
                     id="lblName"
@@ -29,7 +29,7 @@
 
                 <Text
                     id="txtDlgName"
-                    text="{local>Name}"
+                    text="{Name}"
                     visible="{= !${view>/editMode}}" />
 
                 <Input
@@ -46,7 +46,7 @@
 
                 <Text
                     id="txtDlgCity"
-                    text="{local>City}"
+                    text="{City}"
                     visible="{= !${view>/editMode}}" />
 
                 <Input
@@ -63,7 +63,7 @@
 
                 <Text
                     id="txtDlgPhone"
-                    text="{local>Phone}"
+                    text="{Phone}"
                     visible="{= !${view>/editMode}}" />
 
                 <Input

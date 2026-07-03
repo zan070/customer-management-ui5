@@ -14,8 +14,18 @@
       "id": "@sap/generator-fiori:basic",
       "version": "1.27.0",
       "toolsId": "b8775590-2ead-4789-bef5-134fe89a6afb"
+    },
+      "dataSources": {
+    "mainService": {
+        "uri": "/odata/v4/customer/",
+        "type": "OData",
+        "settings": {
+            "odataVersion": "4.0"
+        }
     }
+}
   },
+
   "sap.ui": {
     "technology": "UI5",
     "icons": {
@@ -32,7 +42,7 @@
       "phone": true
     }
   },
-  "sap.ui5": {
+"sap.ui5": {
     "flexEnabled": true,
     "dependencies": {
       "minUI5Version": "1.149.0",
@@ -51,6 +61,16 @@
         "settings": {
           "bundleName": "com.demo.customer.customerui5.i18n.i18n"
         }
+      },
+      "": {
+        "dataSource": "mainService",
+        "type": "sap.ui.model.odata.v4.ODataModel",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
       }
     },
     "resources": {
@@ -60,47 +80,11 @@
         }
       ]
     },
-    "routing": {
-      "config": {
-        "routerClass": "sap.m.routing.Router",
-        "controlAggregation": "pages",
-        "controlId": "app",
-        "transition": "slide",
-        "type": "View",
-        "viewType": "XML",
-        "path": "com.demo.customer.customerui5.view",
-        "async": true,
-        "viewPath": "com.demo.customer.customerui5.view"
-      },
-      "routes": [
-        {
-          "name": "RouteApp",
-          "pattern": ":?query:",
-          "target": [
-            "TargetApp"
-          ]
-        },
-        {
-          "name": "Detail",
-          "pattern": "detail/{customerId}",
-          "target": "TargetDetail"
-        }
-      ],
-      "targets": {
-        "TargetApp": {
-          "id": "App",
-          "name": "App"
-        },
-        "TargetDetail": {
-          "viewName": "Detail"
-        }
-      }
-    },
     "rootView": {
       "viewName": "com.demo.customer.customerui5.view.App",
       "type": "XML",
       "id": "App",
       "async": true
     }
-  }
+}
 }
